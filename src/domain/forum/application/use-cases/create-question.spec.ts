@@ -3,13 +3,13 @@ import { Question } from '../../enterprise/entities/question'
 import { CreateQuestionUseCaseUseCase } from './create-question.usecase'
 import { InMemoryQuestionRepository } from 'test/repositories/in-memory-questions.repository'
 
-let inMemoryAnswerRepository: InMemoryQuestionRepository
+let inMemoryQuestionRepository: InMemoryQuestionRepository
 let sut: CreateQuestionUseCaseUseCase
 
 describe('Create a question', () => {
   beforeEach(() => {
-    inMemoryAnswerRepository = new InMemoryQuestionRepository()
-    sut = new CreateQuestionUseCaseUseCase(inMemoryAnswerRepository)
+    inMemoryQuestionRepository = new InMemoryQuestionRepository()
+    sut = new CreateQuestionUseCaseUseCase(inMemoryQuestionRepository)
   })
 
   it('should be able to create an answer', async () => {
@@ -20,6 +20,6 @@ describe('Create a question', () => {
     })
 
     expect(question.id).toBeTruthy()
-    expect(inMemoryAnswerRepository.items[0].id).toEqual(question.id)
+    expect(inMemoryQuestionRepository.items[0].id).toEqual(question.id)
   })
 })
