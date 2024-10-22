@@ -1,0 +1,58 @@
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
+import { DeleteQuestionUseCaseUseCase } from './delete-question.usecase'
+import { InMemoryQuestionRepository } from 'test/repositories/in-memory-questions.repository'
+import { MakeQuestion } from 'test/factories/make-question.factory'
+import { EditQuestionUseCaseUseCase } from './edit-question.usecase'
+
+let inMemoryQuestionRepository: InMemoryQuestionRepository
+let sut: EditQuestionUseCaseUseCase
+
+describe('DeleteQuestionion', () => {
+  beforeEach(() => {
+    inMemoryQuestionRepository = new InMemoryQuestionRepository()
+    sut = new EditQuestionUseCaseUseCase(inMemoryQuestionRepository)
+  })
+
+  it('should be able to edit a question', async () => {
+    const createdQuestion = MakeQuestion(
+      {
+        authorId: new UniqueEntityId('author-1'),
+      },
+      new UniqueEntityId('question-1'),
+    )
+
+    inMemoryQuestionRepository.create(createdQuestion)
+
+    await sut.execute({
+      questionId: createdQuestion.id.toString(),
+      authorId: 'author-1',
+      title: 'test question',
+      content: 'test content',
+    })
+
+    expect(inMemoryQuestionRepository.items[0]).toMatchObject({
+      title: 'test question',
+      content: 'test content',
+    })
+  })
+
+  it('should not be able to edit a question from another user', async () => {
+    const createdQuestion = MakeQuestion(
+      {
+        authorId: new UniqueEntityId('author-1'),
+      },
+      new UniqueEntityId('question-1'),
+    )
+
+    inMemoryQuestionRepository.create(createdQuestion)
+
+    await expect(() => {
+      return sut.execute({
+        questionId: createdQuestion.id.toString(),
+        authorId: 'author-2',
+        title: 'test question',
+        content: 'test content',
+      })
+    }).rejects.toBeInstanceOf(Error)
+  })
+})
