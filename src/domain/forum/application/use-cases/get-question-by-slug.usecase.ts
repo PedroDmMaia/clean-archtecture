@@ -22,6 +22,7 @@ export class GetQuestionBySlugUseCaseUseCase {
     if (!question) {
       return left(new ResourceNotFounError())
     }
+
     return right({ question })
   }
 }
