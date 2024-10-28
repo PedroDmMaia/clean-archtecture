@@ -3,12 +3,17 @@ import { Question } from '../../enterprise/entities/question'
 import { QuestionRepository } from '../repositories/question.reposotory'
 import { ResourceNotFounError } from './error/resource-not-founs.error'
 import { NotAllowedError } from './error/not-allowed.error'
+import { QuestionAttachmentRepository } from '../repositories/question-attachment.repository'
+import { QuestionAttchemntList } from '../../enterprise/entities/questions-attachment-list'
+import { QuestionAttachment } from '../../enterprise/entities/question-attachment'
+import { UniqueEntityId } from '@/core/entities/unique-entity-id'
 
 interface EditQuestionUseCaseRequest {
   authorId: string
   questionId: string
   title: string
   content: string
+  attachmensIds: string[]
 }
 
 type EditQuestionUseCaseRequestResponse = Either<
@@ -17,12 +22,17 @@ type EditQuestionUseCaseRequestResponse = Either<
 >
 
 export class EditQuestionUseCaseUseCase {
-  constructor(private questionRepository: QuestionRepository) {}
+  constructor(
+    private questionRepository: QuestionRepository,
+    private questionAttachmentRepository: QuestionAttachmentRepository,
+  ) {}
+
   async execute({
     authorId,
     questionId,
     title,
     content,
+    attachmensIds,
   }: EditQuestionUseCaseRequest): Promise<EditQuestionUseCaseRequestResponse> {
     const question = await this.questionRepository.findById(questionId)
 
@@ -34,6 +44,23 @@ export class EditQuestionUseCaseUseCase {
       return left(new NotAllowedError())
     }
 
+    const currentQuestionAttachments =
+      await this.questionAttachmentRepository.findManyByQuestionId(questionId)
+
+    const questionAttachmentList = new QuestionAttchemntList(
+      currentQuestionAttachments,
+    )
+
+    const questionAttachment = attachmensIds.map((attachmentId) => {
+      return QuestionAttachment.create({
+        attachmentId: new UniqueEntityId(attachmentId),
+        questionId: question.id,
+      })
+    })
+
+    questionAttachmentList.update(questionAttachment)
+
+    question.attachments = questionAttachmentList
     question.title = title
     question.content = content
 
