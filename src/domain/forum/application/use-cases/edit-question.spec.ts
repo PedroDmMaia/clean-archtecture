@@ -3,7 +3,7 @@ import { DeleteQuestionUseCaseUseCase } from './delete-question.usecase'
 import { InMemoryQuestionRepository } from 'test/repositories/in-memory-questions.repository'
 import { MakeQuestion } from 'test/factories/make-question.factory'
 import { EditQuestionUseCaseUseCase } from './edit-question.usecase'
-import { NotAllowedError } from './error/not-allowed.error'
+import { NotAllowedError } from '@/core/errors/error/not-allowed.error'
 import { InMemoryQuestionAttachmentRepository } from 'test/repositories/in-memory-questions-attachments.repository'
 import { MakeQuestionAttachment } from 'test/factories/make-question-attachment.factory'
 

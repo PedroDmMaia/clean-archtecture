@@ -1,8 +1,8 @@
 import { Either, right } from '@/core/either'
 import { AnswerComment } from '../../enterprise/entities/answer-comment'
 import { AnswerCommentRepository } from '../repositories/answer-comment.repository'
-import { ResourceNotFounError } from './error/resource-not-founs.error'
-import { NotAllowedError } from './error/not-allowed.error'
+import { ResourceNotFounError } from '@/core/errors/error/resource-not-founs.error'
+import { NotAllowedError } from '@/core/errors/error/not-allowed.error'
 
 interface FetchAnswerCommentsUseCaseRequest {
   answerId: string
